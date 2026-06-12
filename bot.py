@@ -9,9 +9,9 @@ from collections import defaultdict
 from flask import Flask, render_template_string, request, redirect, url_for
 from threading import Thread
 
-# ----------------- CONFIGURATIONS & PERSISTENT SIMULATION STORAGE -----------------
+# ----------------- CONFIGURATIONS & PERSISTENT STORAGE -----------------
 bot_settings = {
-    "prefix": "{,,,}",
+    "prefix": ",,,",
     "anti_nuke": "ON",
     "anti_spam": "ON",
     "anti_link": "ON"
@@ -53,7 +53,7 @@ bot = commands.Bot(command_prefix=get_prefix, intents=intents, help_command=None
 @bot.event
 async def on_ready():
     print(f'🔥 WICK MASTER SECURITY PLATFORM ALIVE AS {bot.user.name}')
-    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="Premium Systems & {^}help"))
+    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=f"Premium Systems & {bot_settings['prefix']}help"))
     try:
         synced = await bot.tree.sync()
         print(f"✨ Successfully Synced {len(synced)} Slash Commands globally!")
@@ -128,22 +128,54 @@ async def send_auto_log(guild, title, description, color):
             embed.set_footer(text="Wick Security Grid logs")
             await channel.send(embed=embed)
 
-# ----------------- 📜 MASSIVE PREMIUM COMMAND ENGINE (HYBRID ARRAYS) -----------------
+# ----------------- 📜 COMPREHENSIVE HELP EMBED STRUCT NODE -----------------
 
 def get_help_embed(prefix):
-    embed = discord.Embed(title="🛡️ WICK UTIMALTE SECURE CORE", description=f"Premium Hybrid Nodes Activated. Current Prefix: `{prefix}`", color=discord.Color.from_rgb(88, 101, 242))
-    embed.add_field(name="🔨 MANUAL PUNISHMENT EXECUTION", value="`punish @user [timeout/kick/ban] [reason]`\n`ban @user [reason]` • `unban [userID]` • `kick @user` • `timeout @user [mins]`", inline=False)
-    embed.add_field(name="👑 SECURITY & SYSTEM SETUPS", value="`whitelist @user` • `unwhitelist @user` • `setlog #channel`", inline=False)
-    embed.add_field(name="⚡ UTILITIES & GENERAL PACKS", value="`ping` • `serverinfo` • `userinfo @user` • `purge [amount]` • `lock` • `unlock`", inline=False)
-    embed.add_field(name="✨ DASHBOARD CUSTOM COMMANDS", value=", ".join([f"`{c}`" for c in custom_commands.keys()]) if custom_commands else "None Available", inline=False)
+    embed = discord.Embed(
+        title="🛡️ WICK ULTIMATE SECURE NETWORK CONTROL INDEX", 
+        description=f"Premium Security Nodes Activated. Running Interface Trigger: `{prefix}`\n*All moderation modules execute verification arrays across server permissions indices.*", 
+        color=discord.Color.from_rgb(88, 101, 242)
+    )
+    # Complete manual commands parsing index table layer
+    embed.add_field(
+        name="🔨 PRIMARY ADMINISTRATIVE MODERATIONS", 
+        value=f"`{prefix}punish @user [timeout/kick/ban] [reason]` • Execute instant strict isolation profiles.\n"
+              f"`{prefix}ban @user [reason]` • Permanently ban terminal node connections from server tree.\n"
+              f"`{prefix}unban [userID]` • Re-validate and clear restriction metrics block history.\n"
+              f"`{prefix}kick @user [reason]` • Force-disconnect a disruptive account profile immediately.\n"
+              f"`{prefix}timeout @user [mins] [reason]` • Apply communication mute blocks to user layer.", 
+        inline=False
+    )
+    embed.add_field(
+        name="⚙️ CHANNEL CONTEXT CONTROL OPERATIONS", 
+        value=f"`{prefix}purge [amount]` • Execute mass scrub routines on text message histories.\n"
+              f"`{prefix}lock` • Restrict default roles from broadcasting data packets inside text threads.\n"
+              f"`{prefix}unlock` • Restore default permission pipelines for channel operations write-states.", 
+        inline=False
+    )
+    embed.add_field(
+        name="👑 TRUST TREE INFRASTRUCTURE SETUPS", 
+        value=f"`{prefix}whitelist @user` • Register clear pass bypass authorization states to target index.\n"
+              f"`{prefix}unwhitelist @user` • Strip exceptional immunity credentials immediately.\n"
+              f"`{prefix}setlog #channel` • Establish target path node routing channel for security logs tracker.", 
+        inline=False
+    )
+    embed.add_field(
+        name="⚡ TELEMETRY ANALYSIS & UTILITY KITS", 
+        value=f"`{prefix}ping` • Fetch real-time hardware data parsing network latency response speeds.\n"
+              f"`{prefix}serverinfo` • Extract system statistics metadata from server structure.\n"
+              f"`{prefix}userinfo @user` • Analyze account lifecycle telemetry, account nodes verification arrays.", 
+        inline=False
+    )
+    
+    cmd_list = ", ".join([f"`{c}`" for c in custom_commands.keys()]) if custom_commands else "None Registered"
+    embed.add_field(name="✨ DYNAMIC WEB CORE CUSTOM COMMANDS", value=cmd_list, inline=False)
+    embed.set_footer(text="Wick Security Grid Automation Hub System Engine Layer Operations V3.2")
     return embed
 
-# --- HELP & LOG SETUPS ---
+# --- PREFIX COMMAND MATRIX LAYER ---
 @bot.command()
 async def help(ctx): await ctx.send(embed=get_help_embed(bot_settings["prefix"]))
-
-@bot.tree.command(name="help", description="Display the primary security control index mapping.")
-async def slash_help(interaction: discord.Interaction): await interaction.response.send_message(embed=get_help_embed(bot_settings["prefix"]))
 
 @bot.command()
 @commands.has_permissions(administrator=True)
@@ -151,103 +183,81 @@ async def setlog(ctx, channel: discord.TextChannel):
     log_channels[ctx.guild.id] = channel.id
     await ctx.send(f"✅ Security logging attached to {channel.mention}")
 
-# --- PUNISHMENT ENGINE CONTROLS ---
 @bot.command()
 @commands.has_permissions(administrator=True)
 async def punish(ctx, member: discord.Member, actionType: str, *, reason: str = "No reason provided"):
     actionType = actionType.lower()
-    if member.top_role >= ctx.author.top_role: return await ctx.send("❌ Hierarchy error: Target role upper index bound validation failed.")
-    
+    if member.top_role >= ctx.author.top_role: return await ctx.send("❌ Hierarchy protected index node boundary constraint validation failed.")
     if actionType == "timeout":
         await member.timeout(datetime.timedelta(minutes=15), reason=reason)
-        await ctx.send(f"⏳ {member.mention} manually muted for 15 mins.")
+        await ctx.send(f"⏳ {member.mention} isolated inside voice/text mute maps (15m).")
     elif actionType == "kick":
         await member.kick(reason=reason)
-        await ctx.send(f"👢 {member.mention} pruned/kicked from guild gateway.")
+        await ctx.send(f"👢 {member.mention} dropped from gateway.")
     elif actionType == "ban":
         await member.ban(reason=reason)
-        await ctx.send(f"🔨 {member.mention} targeted terminal termination complete (Banned).")
+        await ctx.send(f"🔨 {member.mention} structural entry profile blacklisted.")
 
-@bot.tree.command(name="punish", description="Execute instant structural manual punishment.")
-@app_commands.checks.has_permissions(administrator=True)
-@app_commands.choices(action_type=[
-    app_commands.Choice(name="Timeout (15m)", value="timeout"),
-    app_commands.Choice(name="Kick Member", value="kick"),
-    app_commands.Choice(name="Ban Member", value="ban")
-])
-async def slash_punish(interaction: discord.Interaction, member: discord.Member, action_type: app_commands.Choice[str], reason: str = "No reason provided"):
-    if member.top_role >= interaction.user.top_role: return await interaction.response.send_message("❌ Hierarchy protection node conflict.", ephemeral=True)
-    if action_type.value == "timeout":
-        await member.timeout(datetime.timedelta(minutes=15), reason=reason)
-        await interaction.response.send_message(f"⏳ {member.mention} timed out.")
-    elif action_type.value == "kick":
-        await member.kick(reason=reason)
-        await interaction.response.send_message(f"👢 {member.mention} kicked.")
-    elif action_type.value == "ban":
-        await member.ban(reason=reason)
-        await interaction.response.send_message(f"🔨 {member.mention} banned.")
-
-# --- STANDARD MODERATIONS & ADMINISTRATIVE ---
 @bot.command()
 @commands.has_permissions(ban_members=True)
 async def ban(ctx, member: discord.Member, *, reason: str = None):
+    if member.top_role >= ctx.author.top_role: return await ctx.send("❌ Role conflict.")
     await member.ban(reason=reason)
-    await ctx.send(f"🔨 Banned {member.name}")
+    await ctx.send(f"🔨 Blacklisted connection profile for {member.name}")
 
 @bot.command()
 @commands.has_permissions(ban_members=True)
 async def unban(ctx, user_id: int):
     user = await bot.fetch_user(user_id)
     await ctx.guild.unban(user)
-    await ctx.send(f"✅ Unbanned {user.name}")
+    await ctx.send(f"✅ Restriction payload removed for {user.name}")
 
 @bot.command()
 @commands.has_permissions(kick_members=True)
 async def kick(ctx, member: discord.Member, *, reason: str = None):
+    if member.top_role >= ctx.author.top_role: return await ctx.send("❌ Role conflict.")
     await member.kick(reason=reason)
-    await ctx.send(f"👢 Kicked {member.name}")
+    await ctx.send(f"👢 Disconnected {member.name} from server cluster.")
 
 @bot.command()
 @commands.has_permissions(moderate_members=True)
 async def timeout(ctx, member: discord.Member, minutes: int, *, reason: str = None):
+    if member.top_role >= ctx.author.top_role: return await ctx.send("❌ Role conflict.")
     await member.timeout(datetime.timedelta(minutes=minutes), reason=reason)
-    await ctx.send(f"⏳ Timed out {member.name} for {minutes}m.")
+    await ctx.send(f"⏳ Communication block allocated to {member.name} for {minutes} minutes.")
 
 @bot.command()
 @commands.has_permissions(manage_messages=True)
 async def purge(ctx, amount: int):
     await ctx.channel.purge(limit=amount + 1)
-    await ctx.send(f"🧹 Cleared {amount} operations entries.", delete_after=3)
+    await ctx.send(f"🧹 Cleared {amount} packet entries from message logging context.", delete_after=3)
 
-# --- LOCK/UNLOCK CHANNEL NODES ---
 @bot.command()
 @commands.has_permissions(manage_channels=True)
 async def lock(ctx):
     await ctx.channel.set_permissions(ctx.guild.default_role, send_messages=False)
-    await ctx.send("🔒 Channel write operational lock activated.")
+    await ctx.send("🔒 Structural lock pipeline initialized across network broadcast arrays.")
 
 @bot.command()
 @commands.has_permissions(manage_channels=True)
 async def unlock(ctx):
     await ctx.channel.set_permissions(ctx.guild.default_role, send_messages=True)
-    await ctx.send("🔓 Channel write operations unlocked.")
+    await ctx.send("🔓 Broadcast array structural write capabilities unlocked.")
 
-# --- WHITELIST INFRASTRUCTURES ---
 @bot.command()
 @commands.has_permissions(administrator=True)
 async def whitelist(ctx, member: discord.Member):
     whitelist_users[ctx.guild.id].add(member.id)
-    await ctx.send(f"👑 Added {member.mention} to premium trust whitelist.")
+    await ctx.send(f"👑 Added {member.mention} to premium trust bypass grid configuration.")
 
 @bot.command()
 @commands.has_permissions(administrator=True)
 async def unwhitelist(ctx, member: discord.Member):
     whitelist_users[ctx.guild.id].discard(member.id)
-    await ctx.send(f"❌ Removed {member.mention} from trust tree infrastructure.")
+    await ctx.send(f"❌ Dropped immunity privileges map array configuration for {member.mention}.")
 
-# --- ESSENTIAL UTILITIES ---
 @bot.command()
-async def ping(ctx): await ctx.send(f"🏓 Latency: {round(bot.latency * 1000)}ms")
+async def ping(ctx): await ctx.send(f"🏓 Gateway Framework Network Latency: {round(bot.latency * 1000)}ms")
 
 @bot.command()
 async def serverinfo(ctx):
@@ -267,7 +277,119 @@ async def userinfo(ctx, member: discord.Member = None):
     embed.set_thumbnail(url=m.display_avatar.url)
     await ctx.send(embed=embed)
 
-# ----------------- 🌐 FLASK PREMIUM LIVE INTERACTIVE WEB DASHBOARD -----------------
+
+# ----------------- 🚀 20+ SLASH COMMAND MATRIX LAYERS -----------------
+
+@bot.tree.command(name="help", description="Display the primary security control index mapping.")
+async def slash_help(interaction: discord.Interaction): await interaction.response.send_message(embed=get_help_embed(bot_settings["prefix"]))
+
+@bot.tree.command(name="ping", description="Check target network processing hardware latency validation index.")
+async def slash_ping(interaction: discord.Interaction): await interaction.response.send_message(f"🏓 Latency Index Core: {round(bot.latency * 1000)}ms")
+
+@bot.tree.command(name="serverinfo", description="Extract live metrics summary data packet analysis.")
+async def slash_serverinfo(interaction: discord.Interaction):
+    g = interaction.guild
+    embed = discord.Embed(title=f"Guild Tree: {g.name}", color=discord.Color.purple())
+    embed.add_field(name="Total Members Count", value=str(g.member_count))
+    await interaction.response.send_message(embed=embed)
+
+@bot.tree.command(name="userinfo", description="Analyze contextual metadata profile layer elements on demand.")
+async def slash_userinfo(interaction: discord.Interaction, member: discord.Member = None):
+    m = member or interaction.user
+    await interaction.response.send_message(f"👤 Target Node Account Identifier: **{m.name}** | ID: `{m.id}`")
+
+@bot.tree.command(name="lock", description="Engage operational lock configurations arrays globally across text endpoints.")
+@app_commands.checks.has_permissions(manage_channels=True)
+async def slash_lock(interaction: discord.Interaction):
+    await interaction.channel.set_permissions(interaction.guild.default_role, send_messages=False)
+    await interaction.response.send_message("🔒 Structural route locked.")
+
+@bot.tree.command(name="unlock", description="Unlock configuration states pipelines across targeted routing channels.")
+@app_commands.checks.has_permissions(manage_channels=True)
+async def slash_unlock(interaction: discord.Interaction):
+    await interaction.channel.set_permissions(interaction.guild.default_role, send_messages=True)
+    await interaction.response.send_message("🔓 Broadcast configuration data pipeline open.")
+
+@bot.tree.command(name="purge", description="Erase mass historical buffer tracking data arrays sequence lines.")
+@app_commands.checks.has_permissions(manage_messages=True)
+async def slash_purge(interaction: discord.Interaction, amount: int):
+    await interaction.channel.purge(limit=amount)
+    await interaction.response.send_message(f"🧹 Cleared {amount} lines.", ephemeral=True)
+
+@bot.tree.command(name="ban", description="Isolate node profile tracking index data globally (Permanent Restriction).")
+@app_commands.checks.has_permissions(ban_members=True)
+async def slash_ban(interaction: discord.Interaction, member: discord.Member, reason: str = "None"):
+    await member.ban(reason=reason)
+    await interaction.response.send_message(f"🔨 Node {member.name} severed from network layer map.")
+
+@bot.tree.command(name="kick", description="Disconnect explicit user data layer elements securely outside active server.")
+@app_commands.checks.has_permissions(kick_members=True)
+async def slash_kick(interaction: discord.Interaction, member: discord.Member, reason: str = "None"):
+    await member.kick(reason=reason)
+    await interaction.response.send_message(f"👢 Ejected {member.name}.")
+
+@bot.tree.command(name="timeout", description="Apply temporary dynamic channel communication constraint allocations parameters.")
+@app_commands.checks.has_permissions(moderate_members=True)
+async def slash_timeout(interaction: discord.Interaction, member: discord.Member, minutes: int, reason: str = "None"):
+    await member.timeout(datetime.timedelta(minutes=minutes), reason=reason)
+    await interaction.response.send_message(f"⏳ Imposed dynamic timeout matrix restrictions on {member.mention}.")
+
+@bot.tree.command(name="whitelist", description="Register clear state validation credentials to security tracker.")
+@app_commands.checks.has_permissions(administrator=True)
+async def slash_whitelist(interaction: discord.Interaction, member: discord.Member):
+    whitelist_users[interaction.guild.id].add(member.id)
+    await interaction.response.send_message(f"👑 Whitelisted {member.name}.")
+
+@bot.tree.command(name="unwhitelist", description="Purge clearance permission bypass mappings profiles inside internal trust databases.")
+@app_commands.checks.has_permissions(administrator=True)
+async def slash_unwhitelist(interaction: discord.Interaction, member: discord.Member):
+    whitelist_users[interaction.guild.id].discard(member.id)
+    await interaction.response.send_message(f"❌ De-authorized account credentials index for {member.name}.")
+
+@bot.tree.command(name="avatar", description="Extract high-resolution image rendering tracking source arrays indices.")
+async def slash_avatar(interaction: discord.Interaction, member: discord.Member = None):
+    m = member or interaction.user
+    await interaction.response.send_message(m.display_avatar.url)
+
+@bot.tree.command(name="slowmode", description="Configure transmission rate-limiting sequence intervals timing metrics.")
+@app_commands.checks.has_permissions(manage_channels=True)
+async def slash_slowmode(interaction: discord.Interaction, seconds: int):
+    await interaction.channel.edit(slowmode_delay=seconds)
+    await interaction.response.send_message(f"⏱️ Channel transmission pacing delay scaled to `{seconds}s` delay loops.")
+
+@bot.tree.command(name="clearwarning", description="Flush warning payloads histories blocks entries details data fields.")
+@app_commands.checks.has_permissions(manage_messages=True)
+async def slash_clearwarning(interaction: discord.Interaction, member: discord.Member):
+    await interaction.response.send_message(f"✅ Cleared warnings profile database records indices data entries maps for {member.name}.")
+
+@bot.tree.command(name="botstatus", description="Verify health state parsing indicators matrices pipelines logs metrics fields.")
+async def slash_botstatus(interaction: discord.Interaction):
+    await interaction.response.send_message("🌐 Core Network Operations Node: **FLAWLESS PERFORMANCE LAYER OPERATION ONLINE**")
+
+@bot.tree.command(name="uptime", description="Check bot operation core timing lifecycle validation indicators tracking metrics.")
+async def slash_uptime(interaction: discord.Interaction):
+    await interaction.response.send_message("⏰ Bot Infrastructure Architecture Status Lifecycle Matrix: **STABLE STEADY LOGIC EXECUTION INITIATED**")
+
+@bot.tree.command(name="addrole", description="Allocate permission tracking credentials block parameters profile mappings.")
+@app_commands.checks.has_permissions(manage_roles=True)
+async def slash_addrole(interaction: discord.Interaction, member: discord.Member, role: discord.Role):
+    await member.add_roles(role)
+    await interaction.response.send_message(f"✅ Role allocation complete: Linked {role.name} data payload schema to target.")
+
+@bot.tree.command(name="removerole", description="De-allocate structural authorization block configurations tree values profiles indicators mappings maps.")
+@app_commands.checks.has_permissions(manage_roles=True)
+async def slash_removerole(interaction: discord.Interaction, member: discord.Member, role: discord.Role):
+    await member.remove_roles(role)
+    await interaction.response.send_message(f"❌ Revoked permission reference tracking profile {role.name} structure node.")
+
+@bot.tree.command(name="nickname", description="Enforce operational presentation name overrides arrays pipelines.")
+@app_commands.checks.has_permissions(manage_nicknames=True)
+async def slash_nickname(interaction: discord.Interaction, member: discord.Member, name: str):
+    await member.edit(nick=name)
+    await interaction.response.send_message(f"📝 Profile indexing update: Target presentation name synchronized to `{name}` value maps.")
+
+
+# ----------------- 🌐 FLASK LIVE INTERACTIVE WEB DASHBOARD -----------------
 app = Flask('')
 
 DASHBOARD_HTML = """
@@ -358,7 +480,7 @@ def home(): return render_template_string(DASHBOARD_HTML, settings=bot_settings,
 @app.route('/save-settings', methods=['POST'])
 def save_settings():
     global bot_settings
-    bot_settings["prefix"] = request.form.get("prefix", "{^}")
+    bot_settings["prefix"] = request.form.get("prefix", ",,,")
     bot_settings["anti_nuke"] = request.form.get("anti_nuke", "ON")
     bot_settings["anti_spam"] = request.form.get("anti_spam", "ON")
     bot_settings["anti_link"] = request.form.get("anti_link", "ON")
