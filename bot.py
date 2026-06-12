@@ -29,8 +29,8 @@ intents.moderation = True
 
 def get_prefix(bot, message):
     if not message.guild:
-        return '??'
-    return server_prefixes.get(message.guild.id, '??')
+        return '$'
+    return server_prefixes.get(message.guild.id, '$')
 
 bot = commands.Bot(command_prefix=get_prefix, intents=intents, help_command=None)
 
@@ -38,7 +38,7 @@ bot = commands.Bot(command_prefix=get_prefix, intents=intents, help_command=None
 @bot.event
 async def on_ready():
     print(f'🔥 WICK-ULTIMATE HYBRID ALIVE AS {bot.user.name}')
-    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="Prefix ?? & / Commands"))
+    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="Prefix $ & / Commands"))
     
     try:
         synced = await bot.tree.sync()
@@ -118,7 +118,7 @@ async def help(ctx):
 # Slash Help Command
 @bot.tree.command(name="help", description="Show the secure command dashboard.")
 async def slash_help(interaction: discord.Interaction):
-    prefix = server_prefixes.get(interaction.guild.id, '??')
+    prefix = server_prefixes.get(interaction.guild.id, '$')
     await interaction.response.send_message(embed=get_help_embed(prefix))
 
 # ----------------- 🚨 CUSTOM PUNISHMENT SYSTEM (HYBRID) -----------------
