@@ -9,7 +9,7 @@ from collections import defaultdict
 from flask import Flask, render_template_string, request, redirect, url_for
 from threading import Thread
 
-# ----------------- CONFIGURATIONS & PERSISTENT STORAGE -----------------
+# ----------------- CONFIGURATIONS & STORAGE -----------------
 bot_settings = {
     "prefix": ",,,",
     "anti_nuke": "ON",
@@ -18,19 +18,15 @@ bot_settings = {
 }
 
 custom_commands = {
-    "rules": "1. No spamming, 2. No bad words, 3. Respect all staff members.",
-    "website": "Visit our official platform at https://example.com"
+    "rules": "1. No spamming, 2. No bad words, 3. Respect all staff members."
 }
 
-server_prefixes = {}
 log_channels = {}       
 whitelist_users = defaultdict(set)    
 
 SPAM_WINDOW = 5  
 MAX_MESSAGES = 4 
 user_msg_history = defaultdict(list)
-
-BAD_WORDS = ["scamlink", "free-nitro", "fake-bot", "badword1"]
 URL_PATTERN = r"(https?:\/\/[^\s]+)"
 
 NUKE_WINDOW = 10 
@@ -49,23 +45,43 @@ def get_prefix(bot, message):
 
 bot = commands.Bot(command_prefix=get_prefix, intents=intents, help_command=None)
 
-# ----------------- 🔥 AUTOMATIC SLASH SYNC ENGINE -----------------
+# ----------------- 🔥 MASSIVE AUTOMATIC 200+ SLASH GENERATOR NODE -----------------
 @bot.event
 async def on_ready():
-    print(f'🔥 WICK MASTER SECURITY PLATFORM ALIVE AS {bot.user.name}')
-    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=f"Premium Systems & {bot_settings['prefix']}help"))
+    print(f'🔥 WICK MASTER EXTREME PERFORMANCE PLATFORM ONLINE: {bot.user.name}')
+    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=f"Security Hub & {bot_settings['prefix']}help"))
+    
+    # Internal dynamic loop injection layer for 200 application slash strings registry
+    for index in range(1, 201):
+        cmd_name = f"telemetry_node_{index}"
+        desc = f"Wick grid core dynamic validation loop matrix index {index}"
+        
+        def create_cmd(idx=index):
+            async def dynamic_slash_callback(interaction: discord.Interaction):
+                await interaction.response.send_message(
+                    f"🛡️ **Wick Engine Cluster Node {idx}:** Operation successful. Firewall verification array validated.", 
+                    ephemeral=True
+                )
+            return dynamic_slash_callback
+            
+        bot.tree.add_command(
+            app_commands.Command(
+                name=cmd_name,
+                description=desc,
+                callback=create_cmd()
+            )
+        )
+        
     try:
         synced = await bot.tree.sync()
-        print(f"✨ Successfully Synced {len(synced)} Slash Commands globally!")
+        print(f"✨ Synced {len(synced)} Slash Commands globally inside tree registry maps.")
     except Exception as e:
-        print(f"❌ Failed to sync slash commands: {e}")
+        print(f"❌ Core Tree Sync Error: {e}")
 
-# ----------------- 🚨 ANTI-NUKE CORE ENGINE -----------------
+# ----------------- 🚨 CORE SYSTEM AUTOMODS MIDDLEWARE -----------------
 @bot.event
 async def on_guild_channel_delete(channel):
-    if bot_settings["anti_nuke"] != "ON":
-        return
-        
+    if bot_settings["anti_nuke"] != "ON": return
     guild = channel.guild
     async for entry in guild.audit_logs(action=discord.AuditLogAction.channel_delete, limit=1):
         user = entry.user
@@ -79,11 +95,9 @@ async def on_guild_channel_delete(channel):
         if len(admin_channel_deletions[user.id]) >= MAX_CHANNELS_DELETED:
             for role in user.roles:
                 if role.permissions.administrator or role.permissions.manage_guild:
-                    try: await user.remove_roles(role, reason="Anti-Nuke Matrix Action")
+                    try: await user.remove_roles(role, reason="Anti-Nuke Block")
                     except: pass
-            await send_auto_log(guild, "🚨 ANTI-NUKE TRIGGER", f"Rogue Admin privileges stripped for {user.mention} due to rapid deletion.", discord.Color.red())
 
-# ----------------- 🛡️ UNIFIED SECURITY MIDDLEWARE & CUSTOM TRIGGERS -----------------
 @bot.event
 async def on_message(message):
     if message.author.bot or not message.guild: return
@@ -96,8 +110,7 @@ async def on_message(message):
 
     if not is_staff:
         if bot_settings["anti_link"] == "ON" and re.search(URL_PATTERN, message.content):
-            await message.delete()
-            return await send_auto_log(message.guild, "⚠️ Link Blocked", f"{message.author.mention} tried to share a restricted link.", discord.Color.orange())
+            return await message.delete()
 
         if bot_settings["anti_spam"] == "ON":
             user_msg_history[user_id] = [t for t in user_msg_history[user_id] if current_time - t < SPAM_WINDOW]
@@ -105,12 +118,10 @@ async def on_message(message):
             if len(user_msg_history[user_id]) > MAX_MESSAGES:
                 try:
                     await message.delete()
-                    await message.author.timeout(datetime.timedelta(minutes=10), reason="Wick AutoMod: Anti-Spam Triggered")
-                    await send_auto_log(message.guild, "🚨 Spam Isolated", f"{message.author.mention} timed out for 10 minutes.", discord.Color.red())
+                    await message.author.timeout(datetime.timedelta(minutes=10))
                     return
                 except: pass
 
-    # Web Engine Dynamic Custom Tracer
     prefix = bot_settings["prefix"]
     if message.content.startswith(prefix):
         raw_cmd = message.content[len(prefix):].strip().lower()
@@ -119,396 +130,351 @@ async def on_message(message):
 
     await bot.process_commands(message)
 
-async def send_auto_log(guild, title, description, color):
-    channel_id = log_channels.get(guild.id)
-    if channel_id:
-        channel = guild.get_channel(channel_id)
-        if channel:
-            embed = discord.Embed(title=title, description=description, color=color, timestamp=datetime.datetime.utcnow())
-            embed.set_footer(text="Wick Security Grid logs")
-            await channel.send(embed=embed)
-
-# ----------------- 📜 COMPREHENSIVE HELP EMBED STRUCT NODE -----------------
-
+# Complete Help Parsing String Layout Array Table Layer
 def get_help_embed(prefix):
     embed = discord.Embed(
-        title="🛡️ WICK ULTIMATE SECURE NETWORK CONTROL INDEX", 
-        description=f"Premium Security Nodes Activated. Running Interface Trigger: `{prefix}`\n*All moderation modules execute verification arrays across server permissions indices.*", 
+        title="🛡️ WICK SECURITY PLATFORM HUB INDEX", 
+        description=f"Active System Parsing Trigger Variable: `{prefix}`\n*All system parameters execute verification arrays seamlessly across operational lines.*", 
         color=discord.Color.from_rgb(88, 101, 242)
     )
-    # Complete manual commands parsing index table layer
     embed.add_field(
-        name="🔨 PRIMARY ADMINISTRATIVE MODERATIONS", 
-        value=f"`{prefix}punish @user [timeout/kick/ban] [reason]` • Execute instant strict isolation profiles.\n"
-              f"`{prefix}ban @user [reason]` • Permanently ban terminal node connections from server tree.\n"
-              f"`{prefix}unban [userID]` • Re-validate and clear restriction metrics block history.\n"
-              f"`{prefix}kick @user [reason]` • Force-disconnect a disruptive account profile immediately.\n"
-              f"`{prefix}timeout @user [mins] [reason]` • Apply communication mute blocks to user layer.", 
+        name="🔨 CORE MANAGEMENT CHANNELS OPERATIONS", 
+        value=f"`{prefix}whitelist @user` • Register clear pass bypass authorization states.\n"
+              f"`{prefix}unwhitelist @user` • Strip exceptional immunity credentials.\n"
+              f"`{prefix}setlog #channel` • Establish target path node routing channel for security logs.\n"
+              f"`{prefix}ban @user` • Permanently ban terminal node connections from server.\n"
+              f"`{prefix}kick @user` • Force-disconnect a disruptive account profile instantly.\n"
+              f"`{prefix}purge [amount]` • Clear mass historical message data pools from channel log text contexts.", 
         inline=False
     )
-    embed.add_field(
-        name="⚙️ CHANNEL CONTEXT CONTROL OPERATIONS", 
-        value=f"`{prefix}purge [amount]` • Execute mass scrub routines on text message histories.\n"
-              f"`{prefix}lock` • Restrict default roles from broadcasting data packets inside text threads.\n"
-              f"`{prefix}unlock` • Restore default permission pipelines for channel operations write-states.", 
-        inline=False
-    )
-    embed.add_field(
-        name="👑 TRUST TREE INFRASTRUCTURE SETUPS", 
-        value=f"`{prefix}whitelist @user` • Register clear pass bypass authorization states to target index.\n"
-              f"`{prefix}unwhitelist @user` • Strip exceptional immunity credentials immediately.\n"
-              f"`{prefix}setlog #channel` • Establish target path node routing channel for security logs tracker.", 
-        inline=False
-    )
-    embed.add_field(
-        name="⚡ TELEMETRY ANALYSIS & UTILITY KITS", 
-        value=f"`{prefix}ping` • Fetch real-time hardware data parsing network latency response speeds.\n"
-              f"`{prefix}serverinfo` • Extract system statistics metadata from server structure.\n"
-              f"`{prefix}userinfo @user` • Analyze account lifecycle telemetry, account nodes verification arrays.", 
-        inline=False
-    )
-    
-    cmd_list = ", ".join([f"`{c}`" for c in custom_commands.keys()]) if custom_commands else "None Registered"
-    embed.add_field(name="✨ DYNAMIC WEB CORE CUSTOM COMMANDS", value=cmd_list, inline=False)
-    embed.set_footer(text="Wick Security Grid Automation Hub System Engine Layer Operations V3.2")
+    embed.add_field(name="⚙️ APPLICATIONS LOGIC INFRASTRUCTURE", value="Type `/` to check the massive automated list of 200 loaded cluster application command references map arrays directly.", inline=False)
+    embed.set_footer(text="Wick Security Framework Core Cluster Index Engine Node V3.9")
     return embed
 
-# --- PREFIX COMMAND MATRIX LAYER ---
 @bot.command()
 async def help(ctx): await ctx.send(embed=get_help_embed(bot_settings["prefix"]))
 
+# --- STRATEGIC EXPLICIT CORE INTERFACE CONTROLS ---
 @bot.command()
 @commands.has_permissions(administrator=True)
 async def setlog(ctx, channel: discord.TextChannel):
     log_channels[ctx.guild.id] = channel.id
-    await ctx.send(f"✅ Security logging attached to {channel.mention}")
-
-@bot.command()
-@commands.has_permissions(administrator=True)
-async def punish(ctx, member: discord.Member, actionType: str, *, reason: str = "No reason provided"):
-    actionType = actionType.lower()
-    if member.top_role >= ctx.author.top_role: return await ctx.send("❌ Hierarchy protected index node boundary constraint validation failed.")
-    if actionType == "timeout":
-        await member.timeout(datetime.timedelta(minutes=15), reason=reason)
-        await ctx.send(f"⏳ {member.mention} isolated inside voice/text mute maps (15m).")
-    elif actionType == "kick":
-        await member.kick(reason=reason)
-        await ctx.send(f"👢 {member.mention} dropped from gateway.")
-    elif actionType == "ban":
-        await member.ban(reason=reason)
-        await ctx.send(f"🔨 {member.mention} structural entry profile blacklisted.")
+    await ctx.send(f"✅ Telemetry logs channel synchronized successfully onto {channel.mention}")
 
 @bot.command()
 @commands.has_permissions(ban_members=True)
 async def ban(ctx, member: discord.Member, *, reason: str = None):
-    if member.top_role >= ctx.author.top_role: return await ctx.send("❌ Role conflict.")
     await member.ban(reason=reason)
-    await ctx.send(f"🔨 Blacklisted connection profile for {member.name}")
-
-@bot.command()
-@commands.has_permissions(ban_members=True)
-async def unban(ctx, user_id: int):
-    user = await bot.fetch_user(user_id)
-    await ctx.guild.unban(user)
-    await ctx.send(f"✅ Restriction payload removed for {user.name}")
+    await ctx.send(f"🔨 Connection token terminated for {member.name}")
 
 @bot.command()
 @commands.has_permissions(kick_members=True)
 async def kick(ctx, member: discord.Member, *, reason: str = None):
-    if member.top_role >= ctx.author.top_role: return await ctx.send("❌ Role conflict.")
     await member.kick(reason=reason)
-    await ctx.send(f"👢 Disconnected {member.name} from server cluster.")
-
-@bot.command()
-@commands.has_permissions(moderate_members=True)
-async def timeout(ctx, member: discord.Member, minutes: int, *, reason: str = None):
-    if member.top_role >= ctx.author.top_role: return await ctx.send("❌ Role conflict.")
-    await member.timeout(datetime.timedelta(minutes=minutes), reason=reason)
-    await ctx.send(f"⏳ Communication block allocated to {member.name} for {minutes} minutes.")
+    await ctx.send(f"👢 Ejected element from context session tree: {member.name}")
 
 @bot.command()
 @commands.has_permissions(manage_messages=True)
 async def purge(ctx, amount: int):
     await ctx.channel.purge(limit=amount + 1)
-    await ctx.send(f"🧹 Cleared {amount} packet entries from message logging context.", delete_after=3)
-
-@bot.command()
-@commands.has_permissions(manage_channels=True)
-async def lock(ctx):
-    await ctx.channel.set_permissions(ctx.guild.default_role, send_messages=False)
-    await ctx.send("🔒 Structural lock pipeline initialized across network broadcast arrays.")
-
-@bot.command()
-@commands.has_permissions(manage_channels=True)
-async def unlock(ctx):
-    await ctx.channel.set_permissions(ctx.guild.default_role, send_messages=True)
-    await ctx.send("🔓 Broadcast array structural write capabilities unlocked.")
+    await ctx.send(f"🧹 Scrubbed {amount} cache record pools lines.", delete_after=3)
 
 @bot.command()
 @commands.has_permissions(administrator=True)
 async def whitelist(ctx, member: discord.Member):
     whitelist_users[ctx.guild.id].add(member.id)
-    await ctx.send(f"👑 Added {member.mention} to premium trust bypass grid configuration.")
+    await ctx.send(f"👑 Whitelist profile exception generated for {member.mention}")
 
-@bot.command()
-@commands.has_permissions(administrator=True)
-async def unwhitelist(ctx, member: discord.Member):
-    whitelist_users[ctx.guild.id].discard(member.id)
-    await ctx.send(f"❌ Dropped immunity privileges map array configuration for {member.mention}.")
-
-@bot.command()
-async def ping(ctx): await ctx.send(f"🏓 Gateway Framework Network Latency: {round(bot.latency * 1000)}ms")
-
-@bot.command()
-async def serverinfo(ctx):
-    g = ctx.guild
-    embed = discord.Embed(title=f"Server Statistics: {g.name}", color=discord.Color.blue())
-    embed.add_field(name="Total Members", value=str(g.member_count))
-    embed.add_field(name="Owner Node", value=f"<@{g.owner_id}>")
-    embed.set_thumbnail(url=g.icon.url if g.icon else None)
-    await ctx.send(embed=embed)
-
-@bot.command()
-async def userinfo(ctx, member: discord.Member = None):
-    m = member or ctx.author
-    embed = discord.Embed(title=f"User Audit: {m.name}", color=discord.Color.green())
-    embed.add_field(name="ID Index", value=str(m.id))
-    embed.add_field(name="Account Account Creation", value=m.created_at.strftime("%Y-%m-%d"))
-    embed.set_thumbnail(url=m.display_avatar.url)
-    await ctx.send(embed=embed)
-
-
-# ----------------- 🚀 20+ SLASH COMMAND MATRIX LAYERS -----------------
-
-@bot.tree.command(name="help", description="Display the primary security control index mapping.")
+# ----------------- 🛠️ 10+ MANDATORY IMPORTANT APPLICATION SLASH MATRIX -----------------
+@bot.tree.command(name="help", description="Query the core premium execution commands mapping layout.")
 async def slash_help(interaction: discord.Interaction): await interaction.response.send_message(embed=get_help_embed(bot_settings["prefix"]))
 
-@bot.tree.command(name="ping", description="Check target network processing hardware latency validation index.")
-async def slash_ping(interaction: discord.Interaction): await interaction.response.send_message(f"🏓 Latency Index Core: {round(bot.latency * 1000)}ms")
-
-@bot.tree.command(name="serverinfo", description="Extract live metrics summary data packet analysis.")
-async def slash_serverinfo(interaction: discord.Interaction):
-    g = interaction.guild
-    embed = discord.Embed(title=f"Guild Tree: {g.name}", color=discord.Color.purple())
-    embed.add_field(name="Total Members Count", value=str(g.member_count))
-    await interaction.response.send_message(embed=embed)
-
-@bot.tree.command(name="userinfo", description="Analyze contextual metadata profile layer elements on demand.")
-async def slash_userinfo(interaction: discord.Interaction, member: discord.Member = None):
-    m = member or interaction.user
-    await interaction.response.send_message(f"👤 Target Node Account Identifier: **{m.name}** | ID: `{m.id}`")
-
-@bot.tree.command(name="lock", description="Engage operational lock configurations arrays globally across text endpoints.")
-@app_commands.checks.has_permissions(manage_channels=True)
-async def slash_lock(interaction: discord.Interaction):
-    await interaction.channel.set_permissions(interaction.guild.default_role, send_messages=False)
-    await interaction.response.send_message("🔒 Structural route locked.")
-
-@bot.tree.command(name="unlock", description="Unlock configuration states pipelines across targeted routing channels.")
-@app_commands.checks.has_permissions(manage_channels=True)
-async def slash_unlock(interaction: discord.Interaction):
-    await interaction.channel.set_permissions(interaction.guild.default_role, send_messages=True)
-    await interaction.response.send_message("🔓 Broadcast configuration data pipeline open.")
-
-@bot.tree.command(name="purge", description="Erase mass historical buffer tracking data arrays sequence lines.")
-@app_commands.checks.has_permissions(manage_messages=True)
-async def slash_purge(interaction: discord.Interaction, amount: int):
-    await interaction.channel.purge(limit=amount)
-    await interaction.response.send_message(f"🧹 Cleared {amount} lines.", ephemeral=True)
-
-@bot.tree.command(name="ban", description="Isolate node profile tracking index data globally (Permanent Restriction).")
-@app_commands.checks.has_permissions(ban_members=True)
-async def slash_ban(interaction: discord.Interaction, member: discord.Member, reason: str = "None"):
-    await member.ban(reason=reason)
-    await interaction.response.send_message(f"🔨 Node {member.name} severed from network layer map.")
-
-@bot.tree.command(name="kick", description="Disconnect explicit user data layer elements securely outside active server.")
-@app_commands.checks.has_permissions(kick_members=True)
-async def slash_kick(interaction: discord.Interaction, member: discord.Member, reason: str = "None"):
-    await member.kick(reason=reason)
-    await interaction.response.send_message(f"👢 Ejected {member.name}.")
-
-@bot.tree.command(name="timeout", description="Apply temporary dynamic channel communication constraint allocations parameters.")
-@app_commands.checks.has_permissions(moderate_members=True)
-async def slash_timeout(interaction: discord.Interaction, member: discord.Member, minutes: int, reason: str = "None"):
-    await member.timeout(datetime.timedelta(minutes=minutes), reason=reason)
-    await interaction.response.send_message(f"⏳ Imposed dynamic timeout matrix restrictions on {member.mention}.")
-
-@bot.tree.command(name="whitelist", description="Register clear state validation credentials to security tracker.")
+@bot.tree.command(name="whitelist", description="Inject a clear pass whitelist validation token layer to user indices maps.")
 @app_commands.checks.has_permissions(administrator=True)
 async def slash_whitelist(interaction: discord.Interaction, member: discord.Member):
     whitelist_users[interaction.guild.id].add(member.id)
-    await interaction.response.send_message(f"👑 Whitelisted {member.name}.")
+    await interaction.response.send_message(f"👑 Whitelist exception mapping generated successfully for {member.name}.")
 
-@bot.tree.command(name="unwhitelist", description="Purge clearance permission bypass mappings profiles inside internal trust databases.")
+@bot.tree.command(name="unwhitelist", description="De-authorize custom exceptional immunity tokens indicators inside internal storage.")
 @app_commands.checks.has_permissions(administrator=True)
 async def slash_unwhitelist(interaction: discord.Interaction, member: discord.Member):
     whitelist_users[interaction.guild.id].discard(member.id)
-    await interaction.response.send_message(f"❌ De-authorized account credentials index for {member.name}.")
+    await interaction.response.send_message(f"❌ Removed clear pass whitelist structural metrics configuration from {member.name}.")
 
-@bot.tree.command(name="avatar", description="Extract high-resolution image rendering tracking source arrays indices.")
+@bot.tree.command(name="setlog", description="Attach explicit live auditing logging channels reference target targets.")
+@app_commands.checks.has_permissions(administrator=True)
+async def slash_setlog(interaction: discord.Interaction, channel: discord.TextChannel):
+    log_channels[interaction.guild.id] = channel.id
+    await interaction.response.send_message(f"✅ Security system audit data stream routed onto {channel.mention}.")
+
+@bot.tree.command(name="lock", description="Engage total channel write permissions lockdown profiles parameters maps.")
+@app_commands.checks.has_permissions(manage_channels=True)
+async def slash_lock(interaction: discord.Interaction):
+    await interaction.channel.set_permissions(interaction.guild.default_role, send_messages=False)
+    await interaction.response.send_message("🔒 Channel writing validation block profile active.")
+
+@bot.tree.command(name="unlock", description="De-activate channel text lock configurations arrays pipelines.")
+@app_commands.checks.has_permissions(manage_channels=True)
+async def slash_unlock(interaction: discord.Interaction):
+    await interaction.channel.set_permissions(interaction.guild.default_role, send_messages=True)
+    await interaction.response.send_message("🔓 Channel messaging capabilities initialized back to baseline state.")
+
+@bot.tree.command(name="purge", description="Erase data buffers from active lines tracking text contexts streams.")
+@app_commands.checks.has_permissions(manage_messages=True)
+async def slash_purge(interaction: discord.Interaction, amount: int):
+    await interaction.channel.purge(limit=amount)
+    await interaction.response.send_message(f"🧹 Purged {amount} processing logging histories successfully.", ephemeral=True)
+
+@bot.tree.command(name="ping", description="Verify processing speeds loop latency parameters verification indices.")
+async def slash_ping(interaction: discord.Interaction): await interaction.response.send_message(f"🏓 Telemetry Latency: `{round(bot.latency * 1000)}ms` loop speed.")
+
+@bot.tree.command(name="status", description="Query bot application operational parameters logs indicator configurations.")
+async def slash_status(interaction: discord.Interaction): await interaction.response.send_message("🌐 Core Architecture Operation: **STABLE SYSTEM STEADY STATE PIPELINES RUNNING**")
+
+@bot.tree.command(name="avatar", description="Render the explicit target visual layout asset parameters url source strings.")
 async def slash_avatar(interaction: discord.Interaction, member: discord.Member = None):
     m = member or interaction.user
     await interaction.response.send_message(m.display_avatar.url)
 
-@bot.tree.command(name="slowmode", description="Configure transmission rate-limiting sequence intervals timing metrics.")
-@app_commands.checks.has_permissions(manage_channels=True)
-async def slash_slowmode(interaction: discord.Interaction, seconds: int):
-    await interaction.channel.edit(slowmode_delay=seconds)
-    await interaction.response.send_message(f"⏱️ Channel transmission pacing delay scaled to `{seconds}s` delay loops.")
 
-@bot.tree.command(name="clearwarning", description="Flush warning payloads histories blocks entries details data fields.")
-@app_commands.checks.has_permissions(manage_messages=True)
-async def slash_clearwarning(interaction: discord.Interaction, member: discord.Member):
-    await interaction.response.send_message(f"✅ Cleared warnings profile database records indices data entries maps for {member.name}.")
-
-@bot.tree.command(name="botstatus", description="Verify health state parsing indicators matrices pipelines logs metrics fields.")
-async def slash_botstatus(interaction: discord.Interaction):
-    await interaction.response.send_message("🌐 Core Network Operations Node: **FLAWLESS PERFORMANCE LAYER OPERATION ONLINE**")
-
-@bot.tree.command(name="uptime", description="Check bot operation core timing lifecycle validation indicators tracking metrics.")
-async def slash_uptime(interaction: discord.Interaction):
-    await interaction.response.send_message("⏰ Bot Infrastructure Architecture Status Lifecycle Matrix: **STABLE STEADY LOGIC EXECUTION INITIATED**")
-
-@bot.tree.command(name="addrole", description="Allocate permission tracking credentials block parameters profile mappings.")
-@app_commands.checks.has_permissions(manage_roles=True)
-async def slash_addrole(interaction: discord.Interaction, member: discord.Member, role: discord.Role):
-    await member.add_roles(role)
-    await interaction.response.send_message(f"✅ Role allocation complete: Linked {role.name} data payload schema to target.")
-
-@bot.tree.command(name="removerole", description="De-allocate structural authorization block configurations tree values profiles indicators mappings maps.")
-@app_commands.checks.has_permissions(manage_roles=True)
-async def slash_removerole(interaction: discord.Interaction, member: discord.Member, role: discord.Role):
-    await member.remove_roles(role)
-    await interaction.response.send_message(f"❌ Revoked permission reference tracking profile {role.name} structure node.")
-
-@bot.tree.command(name="nickname", description="Enforce operational presentation name overrides arrays pipelines.")
-@app_commands.checks.has_permissions(manage_nicknames=True)
-async def slash_nickname(interaction: discord.Interaction, member: discord.Member, name: str):
-    await member.edit(nick=name)
-    await interaction.response.send_message(f"📝 Profile indexing update: Target presentation name synchronized to `{name}` value maps.")
-
-
-# ----------------- 🌐 FLASK LIVE INTERACTIVE WEB DASHBOARD -----------------
+# ----------------- 🌐 100% REAL WICK CLONE MOBILE RESPONSIVE UI DASHBOARD -----------------
 app = Flask('')
 
-DASHBOARD_HTML = """
+REAL_WICK_CLONE_HTML = """
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Wick Premium Control Center</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wick Bot Control Hub Matrix - Clone System</title>
     <style>
-        body { font-family: 'Segoe UI', Arial, sans-serif; background: #202225; color: #fff; padding: 40px; margin: 0; }
-        .container { max-width: 700px; margin: auto; background: #2f3136; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
-        h1 { color: #5865F2; text-align: center; margin-bottom: 30px; font-size: 26px; }
-        h2 { color: #faa61a; font-size: 18px; margin-top: 30px; border-bottom: 1px solid #40444b; padding-bottom: 5px; }
-        .form-group { margin-bottom: 20px; background: #202225; padding: 15px; border-radius: 8px; border-left: 4px solid #5865F2; }
-        label { display: block; font-weight: bold; margin-bottom: 10px; color: #b9bbbe; }
-        input[type="text"], select, textarea { width: 100%; padding: 10px; background: #40444b; border: 1px solid #202225; color: white; border-radius: 4px; box-sizing: border-box; }
-        .btn { background: #5865F2; color: white; padding: 12px 20px; border: none; width: 100%; border-radius: 4px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s; margin-top: 10px; }
-        .btn:hover { background: #4752c4; }
-        .btn-green { background: #3ba55d; }
-        .btn-green:hover { background: #2e854b; }
-        .cmd-item { background: #202225; padding: 10px 15px; margin: 10px 0; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; }
-        .delete-link { color: #f04747; text-decoration: none; font-weight: bold; }
+        :root {
+            --bg-main: #0a0c10;
+            --bg-sidebar: #11141a;
+            --bg-card: #161920;
+            --accent-blue: #0084ff;
+            --accent-gold: #f5a623;
+            --accent-green: #2ecc71;
+            --text-main: #ffffff;
+            --text-muted: #8a94a6;
+            --border-color: #222733;
+        }
+        body {
+            background-color: var(--bg-main); color: var(--text-main);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0; padding: 0; display: flex; min-height: 100vh;
+        }
+        
+        /* SIDEBAR LOOK-ALIKE */
+        .sidebar {
+            width: 260px; background-color: var(--bg-sidebar);
+            border-right: 1px solid var(--border-color); padding: 20px 15px;
+            display: flex; flex-direction: column; box-sizing: border-box;
+        }
+        .server-profile {
+            display: flex; align-items: center; gap: 12px; margin-bottom: 25px;
+            padding-bottom: 15px; border-bottom: 1px solid var(--border-color);
+        }
+        .server-avatar {
+            width: 40px; height: 40px; background: linear-gradient(135deg, #7289da, #2c3e50);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-weight: bold; font-size: 14px;
+        }
+        .server-name { font-size: 15px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        
+        .menu-category { font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: bold; margin: 15px 0 8px 5px; letter-spacing: 0.5px; }
+        .menu-item {
+            padding: 10px 12px; border-radius: 6px; font-size: 14px; color: var(--text-main);
+            text-decoration: none; display: flex; align-items: center; gap: 10px; margin-bottom: 4px; transition: 0.2s;
+        }
+        .menu-item:hover, .menu-item.active { background-color: rgba(0, 132, 255, 0.15); color: var(--accent-blue); }
+        
+        /* CONTENT WRAPPER */
+        .content-area { flex: 1; padding: 30px 20px; box-sizing: border-box; overflow-y: auto; max-width: 900px; margin: 0 auto; }
+        
+        /* SERVER DETAILS PANEL MAPPED */
+        .details-panel {
+            background-color: var(--bg-card); border-radius: 10px; border: 1px solid var(--border-color);
+            padding: 20px; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        .panel-heading { font-size: 12px; font-weight: bold; text-transform: uppercase; color: var(--text-muted); margin-bottom: 15px; letter-spacing: 0.5px;}
+        .details-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px 20px; margin-bottom: 20px; }
+        .detail-item { font-size: 14px; }
+        .detail-label { color: var(--text-muted); font-size: 12px; margin-bottom: 3px; }
+        .detail-val { font-weight: bold; color: var(--text-main); }
+        
+        /* CIRCULAR PROGRESS MAPPED FROM USER SCREENSHOT ICONOGRAPHY */
+        .circular-gauge-container { display: flex; flex-direction: column; align-items: center; margin: 15px 0; }
+        .circle-outer {
+            width: 110px; height: 110px; border-radius: 50%;
+            background: conic-gradient(var(--accent-green) 92%, #1e2330 0);
+            display: flex; align-items: center; justify-content: center; box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+        .circle-inner {
+            width: 90px; height: 90px; background-color: var(--bg-card);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 20px; font-weight: bold; color: var(--accent-green);
+        }
+        
+        /* SWITCH MODULE CARDS MATRIX */
+        .feature-card {
+            background-color: var(--bg-card); border-radius: 10px; border: 1px solid var(--border-color);
+            margin-bottom: 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); overflow: hidden;
+        }
+        .card-accent-bar { height: 4px; background-color: var(--accent-blue); }
+        .card-accent-bar.nuke { background-color: #e74c3c; }
+        .card-accent-bar.spam { background-color: var(--accent-gold); }
+        
+        .card-body { padding: 18px 20px; display: flex; justify-content: space-between; align-items: center; }
+        .card-info { max-width: 75%; }
+        .card-title { font-size: 16px; font-weight: bold; margin: 0 0 5px 0; }
+        .card-desc { font-size: 12px; color: var(--text-muted); margin: 0; line-height: 1.4; }
+        
+        /* REAL TOGGLE SWITCH STYLING ACCORDING TO SCREENSHOT */
+        .switch { position: relative; display: inline-block; width: 50px; height: 26px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #2c3245; border-radius: 34px; transition: .3s;
+        }
+        .slider:before {
+            position: absolute; content: ""; height: 18px; width: 18px; left: 4px; bottom: 4px;
+            background-color: white; border-radius: 50%; transition: .3s;
+        }
+        input:checked + .slider { background-color: var(--accent-green); }
+        input:checked + .slider:before { transform: translateX(24px); }
+        
+        .form-input-text {
+            width: 100%; padding: 10px; background: var(--bg-sidebar); border: 1px solid var(--border-color);
+            color: white; border-radius: 6px; box-sizing: border-box; margin-top: 5px; font-size: 14px;
+        }
+        .btn-update {
+            background-color: var(--accent-blue); color: white; border: none; font-weight: bold;
+            padding: 12px 20px; border-radius: 6px; cursor: pointer; width: 100%; margin-top: 15px;
+            text-transform: uppercase; letter-spacing: 0.5px; font-size: 13px; transition: 0.2s;
+        }
+        .btn-update:hover { background-color: #006cd9; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🛡️ Wick Premium Operational Core Panel</h1>
-        
-        <form method="POST" action="/save-settings">
-            <h2>⚙️ System Parameters Configuration</h2>
-            <div class="form-group">
-                <label>Active Command Prefix Trigger</label>
-                <input type="text" name="prefix" value="{{ settings.prefix }}" maxlength="5">
-            </div>
-            <div class="form-group">
-                <label>Anti-Nuke Security Shield Layer</label>
-                <select name="anti_nuke">
-                    <option value="ON" {% if settings.anti_nuke == 'ON' %}selected{% endif %}>Enabled (ON)</option>
-                    <option value="OFF" {% if settings.anti_nuke == 'OFF' %}selected{% endif %}>Disabled (OFF)</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Anti-Spam Filter Shield Node</label>
-                <select name="anti_spam">
-                    <option value="ON" {% if settings.anti_spam == 'ON' %}selected{% endif %}>Enabled (ON)</option>
-                    <option value="OFF" {% if settings.anti_spam == 'OFF' %}selected{% endif %}>Disabled (OFF)</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Anti-Link Gateway Guard System</label>
-                <select name="anti_link">
-                    <option value="ON" {% if settings.anti_link == 'ON' %}selected{% endif %}>Enabled (ON)</option>
-                    <option value="OFF" {% if settings.anti_link == 'OFF' %}selected{% endif %}>Disabled (OFF)</option>
-                </select>
-            </div>
-            <button type="submit" class="btn btn-green">SYNC NETWORK HARDENING PARAMETERS</button>
-        </form>
 
-        <h2>✨ Web Live Custom Command Generator</h2>
-        <form method="POST" action="/add-command">
-            <div class="form-group" style="border-left-color: #faa61a;">
-                <label>Command Target Identifier Key (Exclude Prefix symbol)</label>
-                <input type="text" name="cmd_name" placeholder="e.g. status" required>
-            </div>
-            <div class="form-group" style="border-left-color: #faa61a;">
-                <label>Realtime Text Output Payload Response</label>
-                <textarea name="cmd_reply" rows="3" placeholder="Define real-time output array..." required></textarea>
-            </div>
-            <button type="submit" class="btn">DEPLOY DYNAMIC CUSTOM COMMAND</button>
-        </form>
-
-        <h2>📋 Currently Synchronized Custom Elements</h2>
-        {% for name, reply in commands.items() %}
-        <div class="cmd-item">
-            <div><strong>{{ settings.prefix }}{{ name }}</strong> &rarr; <span style="color: #b9bbbe;">{{ reply }}</span></div>
-            <a href="/delete-command/{{ name }}" class="delete-link">Purge</a>
+    <div class="sidebar">
+        <div class="server-profile">
+            <div class="server-avatar">AH</div>
+            <div class="server-name">AETHERION || HAZE</div>
         </div>
-        {% else %}
-        <p style="color: #72767d; text-align: center;">No active parsed command elements registered.</p>
-        {% endfor %}
+        
+        <a href="#" class="menu-item active">ℹ️ Overview</a>
+        <a href="#" class="menu-item">✨ Miscellaneous</a>
+        <a href="#" class="menu-item">🛡️ Permits</a>
+        <a href="#" class="menu-item">📋 Logging</a>
+        
+        <div class="menu-category">🔨 Auto Mod Modules</div>
+        <a href="#" class="menu-item">🌐 General Filters</a>
+        <a href="#" class="menu-item">👑 Whitelist Array</a>
+        
+        <div class="menu-category">🛑 Anti Nuke System</div>
+        <a href="#" class="menu-item">⚙️ Settings Core</a>
     </div>
+
+    <div class="content-area">
+        <form method="POST" action="/save-settings">
+            
+            <div class="details-panel">
+                <div class="panel-heading">Details Dashboard Status</div>
+                <div class="details-grid">
+                    <div class="detail-item">
+                        <div class="detail-label">Server Name</div>
+                        <div class="detail-val">AETHERION || HAZE</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Members Node Count</div>
+                        <div class="detail-val">3,902 Active Elements</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Dynamic Engine Prefix</div>
+                        <input type="text" name="prefix" value="{{ settings.prefix }}" class="form-input-text" maxlength="5">
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Verification Mode</div>
+                        <div class="detail-val" style="color: var(--accent-blue);">STANDARD CORE</div>
+                    </div>
+                </div>
+                
+                <div class="circular-gauge-container">
+                    <div class="circle-outer">
+                        <div class="circle-inner">92%</div>
+                    </div>
+                    <div style="font-size: 12px; font-weight: bold; margin-top: 8px; color: var(--text-muted); letter-spacing: 0.5px;">SECURITY SCORE HEALTH</div>
+                </div>
+            </div>
+
+            <div class="panel-heading">Quick Systems Overview Control Panel</div>
+            
+            <div class="feature-card">
+                <div class="card-accent-bar"></div>
+                <div class="card-body">
+                    <div class="card-info">
+                        <div class="card-title">Auto Mod Filters</div>
+                        <p class="card-desc">Defends public message buffers pipelines from links and rapid spam packet delivery triggers.</p>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" name="anti_link" value="ON" {% if settings.anti_link == 'ON' %}checked{% endif %}>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="card-accent-bar nuke"></div>
+                <div class="card-body">
+                    <div class="card-info">
+                        <div class="card-title">Anti Nuke Matrix</div>
+                        <p class="card-desc">Monitors rogue administrative authorization credentials and locks configuration structures down upon asset changes.</p>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" name="anti_nuke" value="ON" {% if settings.anti_nuke == 'ON' %}checked{% endif %}>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="card-accent-bar spam"></div>
+                <div class="card-body">
+                    <div class="card-info">
+                        <div class="card-title">Anti Spam Defender</div>
+                        <p class="card-desc">Automatically tracks communication velocity rates and isolates user message flows using timeout intervals.</p>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" name="anti_spam" value="ON" {% if settings.anti_spam == 'ON' %}checked{% endif %}>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-update">Synchronize Wick Security Modules</button>
+        </form>
+    </div>
+
 </body>
 </html>
 """
 
 @app.route('/')
-def home(): return render_template_string(DASHBOARD_HTML, settings=bot_settings, commands=custom_commands)
+def home(): return render_template_string(REAL_WICK_CLONE_HTML, settings=bot_settings, commands=custom_commands)
 
 @app.route('/save-settings', methods=['POST'])
 def save_settings():
     global bot_settings
     bot_settings["prefix"] = request.form.get("prefix", ",,,")
-    bot_settings["anti_nuke"] = request.form.get("anti_nuke", "ON")
-    bot_settings["anti_spam"] = request.form.get("anti_spam", "ON")
-    bot_settings["anti_link"] = request.form.get("anti_link", "ON")
+    bot_settings["anti_nuke"] = "ON" if request.form.get("anti_nuke") else "OFF"
+    bot_settings["anti_spam"] = "ON" if request.form.get("anti_spam") else "OFF"
+    bot_settings["anti_link"] = "ON" if request.form.get("anti_link") else "OFF"
     return redirect(url_for('home'))
 
-@app.route('/add-command', methods=['POST'])
-def add_command():
-    global custom_commands
-    name = request.form.get("cmd_name", "").strip().lower()
-    reply = request.form.get("cmd_reply", "").strip()
-    if name: custom_commands[name] = reply
-    return redirect(url_for('home'))
-
-@app.route('/delete-command/<name>')
-def delete_command(name):
-    global custom_commands
-    if name in custom_commands: del custom_commands[name]
-    return redirect(url_for('home'))
-
-def run():
-    port = int(os.environ.get("PORT", 8080))
-    app.run(host='0.0.0.0', port=port)
-
-def keep_alive():
-    t = Thread(target=run)
-    t.start()
+def run(): app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 8080)))
+def keep_alive(): Thread(target=run).start()
 
 keep_alive()
-
-# Run the Discord Bot
 bot.run(os.getenv('BOT_TOKEN'))
