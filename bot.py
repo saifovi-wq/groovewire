@@ -9,15 +9,14 @@ from collections import defaultdict
 from flask import Flask, render_template_string, request, redirect, url_for
 from threading import Thread
 
-# ----------------- CONFIGURATIONS & STORAGE -----------------
+# ----------------- CONFIGURATIONS & PERSISTENT SIMULATION STORAGE -----------------
 bot_settings = {
-    "prefix": "{^}",
+    "prefix": "{,,,}",
     "anti_nuke": "ON",
     "anti_spam": "ON",
     "anti_link": "ON"
 }
 
-# Realtime custom command trigger dictionary matrix storage
 custom_commands = {
     "rules": "1. No spamming, 2. No bad words, 3. Respect all staff members.",
     "website": "Visit our official platform at https://example.com"
@@ -50,14 +49,16 @@ def get_prefix(bot, message):
 
 bot = commands.Bot(command_prefix=get_prefix, intents=intents, help_command=None)
 
+# ----------------- 🔥 AUTOMATIC SLASH SYNC ENGINE -----------------
 @bot.event
 async def on_ready():
-    print(f'🔥 WICK ULTIMATE CUSTOM ENGINE OPERATIONAL AS {bot.user.name}')
-    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="Dashboard Live Custom Cmds"))
+    print(f'🔥 WICK MASTER SECURITY PLATFORM ALIVE AS {bot.user.name}')
+    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="Premium Systems & {^}help"))
     try:
-        await bot.tree.sync()
+        synced = await bot.tree.sync()
+        print(f"✨ Successfully Synced {len(synced)} Slash Commands globally!")
     except Exception as e:
-        print(f"Slash Sync Error: {e}")
+        print(f"❌ Failed to sync slash commands: {e}")
 
 # ----------------- 🚨 ANTI-NUKE CORE ENGINE -----------------
 @bot.event
@@ -78,10 +79,11 @@ async def on_guild_channel_delete(channel):
         if len(admin_channel_deletions[user.id]) >= MAX_CHANNELS_DELETED:
             for role in user.roles:
                 if role.permissions.administrator or role.permissions.manage_guild:
-                    try: await user.remove_roles(role, reason="Anti-Nuke System Core Action")
+                    try: await user.remove_roles(role, reason="Anti-Nuke Matrix Action")
                     except: pass
+            await send_auto_log(guild, "🚨 ANTI-NUKE TRIGGER", f"Rogue Admin privileges stripped for {user.mention} due to rapid deletion.", discord.Color.red())
 
-# ----------------- 🛡️ UNIFIED SECURITY ENGINE & CUSTOM CMDS LAYER -----------------
+# ----------------- 🛡️ UNIFIED SECURITY MIDDLEWARE & CUSTOM TRIGGERS -----------------
 @bot.event
 async def on_message(message):
     if message.author.bot or not message.guild: return
@@ -93,22 +95,22 @@ async def on_message(message):
     is_staff = message.author.guild_permissions.manage_messages or is_whitelisted
 
     if not is_staff:
-        # Anti-Link Filter Switch Check
         if bot_settings["anti_link"] == "ON" and re.search(URL_PATTERN, message.content):
-            return await message.delete()
+            await message.delete()
+            return await send_auto_log(message.guild, "⚠️ Link Blocked", f"{message.author.mention} tried to share a restricted link.", discord.Color.orange())
 
-        # Anti-Spam Filter Switch Check
         if bot_settings["anti_spam"] == "ON":
             user_msg_history[user_id] = [t for t in user_msg_history[user_id] if current_time - t < SPAM_WINDOW]
             user_msg_history[user_id].append(current_time)
             if len(user_msg_history[user_id]) > MAX_MESSAGES:
                 try:
                     await message.delete()
-                    await message.author.timeout(datetime.timedelta(minutes=10))
+                    await message.author.timeout(datetime.timedelta(minutes=10), reason="Wick AutoMod: Anti-Spam Triggered")
+                    await send_auto_log(message.guild, "🚨 Spam Isolated", f"{message.author.mention} timed out for 10 minutes.", discord.Color.red())
                     return
                 except: pass
 
-    # --- WEBSITE GENERATED CUSTOM COMMAND TRACER ENGINE ---
+    # Web Engine Dynamic Custom Tracer
     prefix = bot_settings["prefix"]
     if message.content.startswith(prefix):
         raw_cmd = message.content[len(prefix):].strip().lower()
@@ -117,26 +119,162 @@ async def on_message(message):
 
     await bot.process_commands(message)
 
-# ----------------- 📜 EMBED DASHBOARD CONTROL -----------------
+async def send_auto_log(guild, title, description, color):
+    channel_id = log_channels.get(guild.id)
+    if channel_id:
+        channel = guild.get_channel(channel_id)
+        if channel:
+            embed = discord.Embed(title=title, description=description, color=color, timestamp=datetime.datetime.utcnow())
+            embed.set_footer(text="Wick Security Grid logs")
+            await channel.send(embed=embed)
+
+# ----------------- 📜 MASSIVE PREMIUM COMMAND ENGINE (HYBRID ARRAYS) -----------------
+
+def get_help_embed(prefix):
+    embed = discord.Embed(title="🛡️ WICK UTIMALTE SECURE CORE", description=f"Premium Hybrid Nodes Activated. Current Prefix: `{prefix}`", color=discord.Color.from_rgb(88, 101, 242))
+    embed.add_field(name="🔨 MANUAL PUNISHMENT EXECUTION", value="`punish @user [timeout/kick/ban] [reason]`\n`ban @user [reason]` • `unban [userID]` • `kick @user` • `timeout @user [mins]`", inline=False)
+    embed.add_field(name="👑 SECURITY & SYSTEM SETUPS", value="`whitelist @user` • `unwhitelist @user` • `setlog #channel`", inline=False)
+    embed.add_field(name="⚡ UTILITIES & GENERAL PACKS", value="`ping` • `serverinfo` • `userinfo @user` • `purge [amount]` • `lock` • `unlock`", inline=False)
+    embed.add_field(name="✨ DASHBOARD CUSTOM COMMANDS", value=", ".join([f"`{c}`" for c in custom_commands.keys()]) if custom_commands else "None Available", inline=False)
+    return embed
+
+# --- HELP & LOG SETUPS ---
 @bot.command()
-async def help(ctx):
-    prefix = bot_settings["prefix"]
-    embed = discord.Embed(title="🛡️ WICK ULTIMATE LIVE CORE", color=discord.Color.from_rgb(88, 101, 242))
-    embed.add_field(name="Current Guard Settings", value=f"Prefix: `{prefix}`\nAnti-Nuke: `{bot_settings['anti_nuke']}`\nAnti-Spam: `{bot_settings['anti_spam']}`\nAnti-Link: `{bot_settings['anti_link']}`", inline=False)
+async def help(ctx): await ctx.send(embed=get_help_embed(bot_settings["prefix"]))
+
+@bot.tree.command(name="help", description="Display the primary security control index mapping.")
+async def slash_help(interaction: discord.Interaction): await interaction.response.send_message(embed=get_help_embed(bot_settings["prefix"]))
+
+@bot.command()
+@commands.has_permissions(administrator=True)
+async def setlog(ctx, channel: discord.TextChannel):
+    log_channels[ctx.guild.id] = channel.id
+    await ctx.send(f"✅ Security logging attached to {channel.mention}")
+
+# --- PUNISHMENT ENGINE CONTROLS ---
+@bot.command()
+@commands.has_permissions(administrator=True)
+async def punish(ctx, member: discord.Member, actionType: str, *, reason: str = "No reason provided"):
+    actionType = actionType.lower()
+    if member.top_role >= ctx.author.top_role: return await ctx.send("❌ Hierarchy error: Target role upper index bound validation failed.")
     
-    # Active custom commands trace string parser
-    cmd_list = ", ".join([f"`{c}`" for c in custom_commands.keys()]) if custom_commands else "None Created"
-    embed.add_field(name="✨ Dashboard Custom Commands", value=cmd_list, inline=False)
+    if actionType == "timeout":
+        await member.timeout(datetime.timedelta(minutes=15), reason=reason)
+        await ctx.send(f"⏳ {member.mention} manually muted for 15 mins.")
+    elif actionType == "kick":
+        await member.kick(reason=reason)
+        await ctx.send(f"👢 {member.mention} pruned/kicked from guild gateway.")
+    elif actionType == "ban":
+        await member.ban(reason=reason)
+        await ctx.send(f"🔨 {member.mention} targeted terminal termination complete (Banned).")
+
+@bot.tree.command(name="punish", description="Execute instant structural manual punishment.")
+@app_commands.checks.has_permissions(administrator=True)
+@app_commands.choices(action_type=[
+    app_commands.Choice(name="Timeout (15m)", value="timeout"),
+    app_commands.Choice(name="Kick Member", value="kick"),
+    app_commands.Choice(name="Ban Member", value="ban")
+])
+async def slash_punish(interaction: discord.Interaction, member: discord.Member, action_type: app_commands.Choice[str], reason: str = "No reason provided"):
+    if member.top_role >= interaction.user.top_role: return await interaction.response.send_message("❌ Hierarchy protection node conflict.", ephemeral=True)
+    if action_type.value == "timeout":
+        await member.timeout(datetime.timedelta(minutes=15), reason=reason)
+        await interaction.response.send_message(f"⏳ {member.mention} timed out.")
+    elif action_type.value == "kick":
+        await member.kick(reason=reason)
+        await interaction.response.send_message(f"👢 {member.mention} kicked.")
+    elif action_type.value == "ban":
+        await member.ban(reason=reason)
+        await interaction.response.send_message(f"🔨 {member.mention} banned.")
+
+# --- STANDARD MODERATIONS & ADMINISTRATIVE ---
+@bot.command()
+@commands.has_permissions(ban_members=True)
+async def ban(ctx, member: discord.Member, *, reason: str = None):
+    await member.ban(reason=reason)
+    await ctx.send(f"🔨 Banned {member.name}")
+
+@bot.command()
+@commands.has_permissions(ban_members=True)
+async def unban(ctx, user_id: int):
+    user = await bot.fetch_user(user_id)
+    await ctx.guild.unban(user)
+    await ctx.send(f"✅ Unbanned {user.name}")
+
+@bot.command()
+@commands.has_permissions(kick_members=True)
+async def kick(ctx, member: discord.Member, *, reason: str = None):
+    await member.kick(reason=reason)
+    await ctx.send(f"👢 Kicked {member.name}")
+
+@bot.command()
+@commands.has_permissions(moderate_members=True)
+async def timeout(ctx, member: discord.Member, minutes: int, *, reason: str = None):
+    await member.timeout(datetime.timedelta(minutes=minutes), reason=reason)
+    await ctx.send(f"⏳ Timed out {member.name} for {minutes}m.")
+
+@bot.command()
+@commands.has_permissions(manage_messages=True)
+async def purge(ctx, amount: int):
+    await ctx.channel.purge(limit=amount + 1)
+    await ctx.send(f"🧹 Cleared {amount} operations entries.", delete_after=3)
+
+# --- LOCK/UNLOCK CHANNEL NODES ---
+@bot.command()
+@commands.has_permissions(manage_channels=True)
+async def lock(ctx):
+    await ctx.channel.set_permissions(ctx.guild.default_role, send_messages=False)
+    await ctx.send("🔒 Channel write operational lock activated.")
+
+@bot.command()
+@commands.has_permissions(manage_channels=True)
+async def unlock(ctx):
+    await ctx.channel.set_permissions(ctx.guild.default_role, send_messages=True)
+    await ctx.send("🔓 Channel write operations unlocked.")
+
+# --- WHITELIST INFRASTRUCTURES ---
+@bot.command()
+@commands.has_permissions(administrator=True)
+async def whitelist(ctx, member: discord.Member):
+    whitelist_users[ctx.guild.id].add(member.id)
+    await ctx.send(f"👑 Added {member.mention} to premium trust whitelist.")
+
+@bot.command()
+@commands.has_permissions(administrator=True)
+async def unwhitelist(ctx, member: discord.Member):
+    whitelist_users[ctx.guild.id].discard(member.id)
+    await ctx.send(f"❌ Removed {member.mention} from trust tree infrastructure.")
+
+# --- ESSENTIAL UTILITIES ---
+@bot.command()
+async def ping(ctx): await ctx.send(f"🏓 Latency: {round(bot.latency * 1000)}ms")
+
+@bot.command()
+async def serverinfo(ctx):
+    g = ctx.guild
+    embed = discord.Embed(title=f"Server Statistics: {g.name}", color=discord.Color.blue())
+    embed.add_field(name="Total Members", value=str(g.member_count))
+    embed.add_field(name="Owner Node", value=f"<@{g.owner_id}>")
+    embed.set_thumbnail(url=g.icon.url if g.icon else None)
     await ctx.send(embed=embed)
 
-# ----------------- 🌐 FLASK LIVE INTERACTIVE CONTROLLER PANEL -----------------
+@bot.command()
+async def userinfo(ctx, member: discord.Member = None):
+    m = member or ctx.author
+    embed = discord.Embed(title=f"User Audit: {m.name}", color=discord.Color.green())
+    embed.add_field(name="ID Index", value=str(m.id))
+    embed.add_field(name="Account Account Creation", value=m.created_at.strftime("%Y-%m-%d"))
+    embed.set_thumbnail(url=m.display_avatar.url)
+    await ctx.send(embed=embed)
+
+# ----------------- 🌐 FLASK PREMIUM LIVE INTERACTIVE WEB DASHBOARD -----------------
 app = Flask('')
 
 DASHBOARD_HTML = """
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Wick Premium Web Panel</title>
+    <title>Wick Premium Control Center</title>
     <style>
         body { font-family: 'Segoe UI', Arial, sans-serif; background: #202225; color: #fff; padding: 40px; margin: 0; }
         .container { max-width: 700px; margin: auto; background: #2f3136; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
@@ -155,59 +293,59 @@ DASHBOARD_HTML = """
 </head>
 <body>
     <div class="container">
-        <h1>🛡️ Wick Secure Customization Portal</h1>
+        <h1>🛡️ Wick Premium Operational Core Panel</h1>
         
         <form method="POST" action="/save-settings">
-            <h2>⚙️ Core Engine Configuration</h2>
+            <h2>⚙️ System Parameters Configuration</h2>
             <div class="form-group">
-                <label>Command Prefix</label>
+                <label>Active Command Prefix Trigger</label>
                 <input type="text" name="prefix" value="{{ settings.prefix }}" maxlength="5">
             </div>
             <div class="form-group">
-                <label>Anti-Nuke Matrix Shield</label>
+                <label>Anti-Nuke Security Shield Layer</label>
                 <select name="anti_nuke">
                     <option value="ON" {% if settings.anti_nuke == 'ON' %}selected{% endif %}>Enabled (ON)</option>
                     <option value="OFF" {% if settings.anti_nuke == 'OFF' %}selected{% endif %}>Disabled (OFF)</option>
                 </select>
             </div>
             <div class="form-group">
-                <label>Anti-Spam Filter Shield</label>
+                <label>Anti-Spam Filter Shield Node</label>
                 <select name="anti_spam">
                     <option value="ON" {% if settings.anti_spam == 'ON' %}selected{% endif %}>Enabled (ON)</option>
                     <option value="OFF" {% if settings.anti_spam == 'OFF' %}selected{% endif %}>Disabled (OFF)</option>
                 </select>
             </div>
             <div class="form-group">
-                <label>Anti-Link Gateway Guard</label>
+                <label>Anti-Link Gateway Guard System</label>
                 <select name="anti_link">
                     <option value="ON" {% if settings.anti_link == 'ON' %}selected{% endif %}>Enabled (ON)</option>
                     <option value="OFF" {% if settings.anti_link == 'OFF' %}selected{% endif %}>Disabled (OFF)</option>
                 </select>
             </div>
-            <button type="submit" class="btn btn-green">UPDATE SYSTEM FILTERS</button>
+            <button type="submit" class="btn btn-green">SYNC NETWORK HARDENING PARAMETERS</button>
         </form>
 
-        <h2>✨ Custom Commands Manager</h2>
+        <h2>✨ Web Live Custom Command Generator</h2>
         <form method="POST" action="/add-command">
             <div class="form-group" style="border-left-color: #faa61a;">
-                <label>Command Trigger (Do not include prefix symbol)</label>
-                <input type="text" name="cmd_name" placeholder="e.g. facebook" required>
+                <label>Command Target Identifier Key (Exclude Prefix symbol)</label>
+                <input type="text" name="cmd_name" placeholder="e.g. status" required>
             </div>
             <div class="form-group" style="border-left-color: #faa61a;">
-                <label>Automated Bot Text Response Output</label>
-                <textarea name="cmd_reply" rows="3" placeholder="Type what the bot should reply..." required></textarea>
+                <label>Realtime Text Output Payload Response</label>
+                <textarea name="cmd_reply" rows="3" placeholder="Define real-time output array..." required></textarea>
             </div>
-            <button type="submit" class="btn">CREATE REALTIME COMMAND</button>
+            <button type="submit" class="btn">DEPLOY DYNAMIC CUSTOM COMMAND</button>
         </form>
 
-        <h2>📋 Currently Active Custom Commands</h2>
+        <h2>📋 Currently Synchronized Custom Elements</h2>
         {% for name, reply in commands.items() %}
         <div class="cmd-item">
             <div><strong>{{ settings.prefix }}{{ name }}</strong> &rarr; <span style="color: #b9bbbe;">{{ reply }}</span></div>
-            <a href="/delete-command/{{ name }}" class="delete-link">Remove</a>
+            <a href="/delete-command/{{ name }}" class="delete-link">Purge</a>
         </div>
         {% else %}
-        <p style="color: #72767d; text-align: center;">No custom commands created yet.</p>
+        <p style="color: #72767d; text-align: center;">No active parsed command elements registered.</p>
         {% endfor %}
     </div>
 </body>
@@ -215,8 +353,7 @@ DASHBOARD_HTML = """
 """
 
 @app.route('/')
-def home():
-    return render_template_string(DASHBOARD_HTML, settings=bot_settings, commands=custom_commands)
+def home(): return render_template_string(DASHBOARD_HTML, settings=bot_settings, commands=custom_commands)
 
 @app.route('/save-settings', methods=['POST'])
 def save_settings():
@@ -232,15 +369,13 @@ def add_command():
     global custom_commands
     name = request.form.get("cmd_name", "").strip().lower()
     reply = request.form.get("cmd_reply", "").strip()
-    if name:
-        custom_commands[name] = reply
+    if name: custom_commands[name] = reply
     return redirect(url_for('home'))
 
 @app.route('/delete-command/<name>')
 def delete_command(name):
     global custom_commands
-    if name in custom_commands:
-        del custom_commands[name]
+    if name in custom_commands: del custom_commands[name]
     return redirect(url_for('home'))
 
 def run():
