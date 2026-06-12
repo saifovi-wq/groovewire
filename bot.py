@@ -180,4 +180,27 @@ async def help(ctx):
     embed.set_footer(text="Anti-Spam & AutoMod Active BACKGROUND WORKTIME")
     await ctx.send(embed=embed)
 
+# ----------------- DUMMY WEB SERVER FOR RENDER PORT BINDING -----------------
+from flask import Flask
+from threading import Thread
+
+app = Flask('')
+
+@app.route('/')
+def home():
+    return "Wick Ultimate Security Engine Alive!"
+
+def run():
+    # Render automatic env internal port generate kore dynamically
+    port = int(os.environ.get("PORT", 8080))
+    app.run(host='0.0.0.0', port=port)
+
+def keep_alive():
+    t = Thread(target=run)
+    t.start()
+
+# Server layer init execute before bot login session
+keep_alive()
+
+# Run the Discord Bot
 bot.run(os.getenv('BOT_TOKEN'))
